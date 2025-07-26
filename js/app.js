@@ -48,14 +48,38 @@ function updateContentForPage(page) {
     let filteredScenepacks = [];
     let searchInput, genreFilter, resultsContainerId, noResultsMessageId, typeFilter;
 
+    // Log the current state of allScenepacksData for debugging
+    console.log(`updateContentForPage called for page: ${page}`);
+    console.log("Current allScenepacksData:", allScenepacksData);
+
     switch (page) {
         case 'home':
             searchInput = document.getElementById('homeSearchInput');
             resultsContainerId = 'homeScenepackResults';
             noResultsMessageId = 'noHomeResultsMessage';
+            // Filter logic: if search input is empty, show all. Otherwise, filter by name.
+            const homeSearchQuery = normalizeString(searchInput.value || '');
             filteredScenepacks = allScenepacksData.filter(pack =>
-                normalizeString(pack.name).includes(normalizeString(searchInput.value || ''))
+                homeSearchQuery === '' || normalizeString(pack.name).includes(homeSearchQuery)
             );
+            break;
+        case 'scenepacks': // New case for "Scenepacks" page (all types)
+            searchInput = document.getElementById('scenepacksSearchInput');
+            genreFilter = document.getElementById('scenepacksGenreFilter');
+            resultsContainerId = 'scenepacksScenepackResults';
+            noResultsMessageId = 'noScenepacksResultsMessage';
+
+            // Populate genre filter for ALL types (pass null as categoryType)
+            populateGenreFilter('scenepacksGenreFilter', null, allScenepacksData);
+
+            const scenepacksSearchQuery = normalizeString(searchInput.value || '');
+            const scenepacksSelectedGenre = genreFilter.value;
+
+            filteredScenepacks = allScenepacksData.filter(pack => {
+                const matchesSearch = scenepacksSearchQuery === '' || normalizeString(pack.name).includes(scenepacksSearchQuery);
+                const matchesGenre = (scenepacksSelectedGenre === '' || (pack.genre && normalizeString(pack.genre) === normalizeString(scenepacksSelectedGenre)));
+                return matchesSearch && matchesGenre; // No type filter for 'scenepacks' page
+            });
             break;
         case 'movies':
         case 'games':
@@ -70,20 +94,29 @@ function updateContentForPage(page) {
             // Populate genre filter on page load/switch
             populateGenreFilter(`${typeFilter}GenreFilter`, typeFilter, allScenepacksData);
 
+            const categorySearchQuery = normalizeString(searchInput.value || '');
+            const categorySelectedGenre = genreFilter.value;
+
             filteredScenepacks = allScenepacksData.filter(pack => {
                 const matchesType = pack.type === typeFilter;
-                const matchesSearch = normalizeString(pack.name).includes(normalizeString(searchInput.value || ''));
-                const matchesGenre = (genreFilter.value === '' || (pack.genre && normalizeString(pack.genre) === normalizeString(genreFilter.value)));
+                const matchesSearch = categorySearchQuery === '' || normalizeString(pack.name).includes(categorySearchQuery);
+                const matchesGenre = (categorySelectedGenre === '' || (pack.genre && normalizeString(pack.genre) === normalizeString(categorySelectedGenre)));
                 return matchesType && matchesSearch && matchesGenre;
             });
             break;
         case 'dashboard':
             renderDashboard(); // Dashboard has its own rendering logic
             return; // Don't proceed with displayScenepacks for dashboard
+        case 'how-to-download':
+        case 'report-dead-link':
+        case 'other':
+            // These pages don't display scenepacks, so no filtering/display needed
+            return;
     }
 
     // Sort filtered results alphabetically by name before displaying
     filteredScenepacks.sort((a, b) => a.name.localeCompare(b.name));
+    console.log(`Filtered scenepacks for ${page}:`, filteredScenepacks); // Log filtered results
     displayScenepacks(filteredScenepacks, resultsContainerId, noResultsMessageId);
 }
 
@@ -242,7 +275,8 @@ function cancelDelete() {
  */
 function startDiscordLogin() {
     // Redirect to your Flask backend's Discord login endpoint
-    window.location.href = "https://scenepacks-652656771624.us-central1.run.app/login/discord"; // Updated for deployment!
+    // IMPORTANT: Replace with your actual deployed backend URL
+    window.location.href = "https://scenepacks-652656771624.us-central1.run.app/login/discord";
 }
 
 // --- Initialization and Event Listeners ---
@@ -270,6 +304,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             id: doc.id,
             ...doc.data()
         }));
+        console.log("Firestore data updated. allScenepacksData:", allScenepacksData); // Log data after fetch
         // Trigger content update for the current page whenever data changes in Firestore
         updateContentForPage(currentPage);
     }, (err) => {
@@ -282,14 +317,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Navigation buttons
     document.getElementById('nav-home').addEventListener('click', () => showPage('home'));
+    document.getElementById('nav-scenepacks').addEventListener('click', () => showPage('scenepacks')); // New listener for 'Scenepacks'
     document.getElementById('nav-movies').addEventListener('click', () => showPage('movies'));
     document.getElementById('nav-games').addEventListener('click', () => showPage('games'));
     document.getElementById('nav-tvshows').addEventListener('click', () => showPage('tvshows'));
     document.getElementById('nav-anime').addEventListener('click', () => showPage('anime'));
+    document.getElementById('nav-how-to-download').addEventListener('click', () => showPage('how-to-download')); // New listener
+    document.getElementById('nav-report-dead-link').addEventListener('click', () => showPage('report-dead-link')); // New listener
+    document.getElementById('nav-other').addEventListener('click', () => showPage('other')); // New listener
     document.getElementById('nav-dashboard').addEventListener('click', () => showPage('dashboard'));
 
     // Search and filter input listeners for each section
     document.getElementById('homeSearchInput').addEventListener('input', () => updateContentForPage('home'));
+
+    // New listeners for scenepacks page
+    document.getElementById('scenepacksSearchInput').addEventListener('input', () => updateContentForPage('scenepacks'));
+    document.getElementById('scenepacksGenreFilter').addEventListener('change', () => updateContentForPage('scenepacks'));
 
     document.getElementById('movieSearchInput').addEventListener('input', () => updateContentForPage('movies'));
     document.getElementById('movieGenreFilter').addEventListener('change', () => updateContentForPage('movies'));

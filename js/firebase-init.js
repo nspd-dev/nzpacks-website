@@ -3,13 +3,27 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+// --- Firebase Client-Side Configuration ---
+// IMPORTANT: This has been replaced with your actual Firebase project's config.
+const firebaseConfig = {
+  apiKey: "AIzaSyD4cQB-xifyOuxZg3QwN2WFESor5D97i_A",
+  authDomain: "scenepacks-80f8c.firebaseapp.com",
+  projectId: "scenepacks-80f8c",
+  storageBucket: "scenepacks-80f8c.firebasestorage.app",
+  messagingSenderId: "146827293794",
+  appId: "1:146827293794:web:432def3794868be4ec4d3b",
+  measurementId: "G-70NSQF6DL3"
+};
+
+
 // --- Global Firebase Variables ---
 export let app;
 export let db;
 export let auth;
 export let userId = null; // Will now store Discord User ID if logged in via Discord
 export let isAuthReady = false;
-export let appId = 'default-app-id'; // Default for local dev, will be overridden by __app_id
+// Ensure appId is consistently set to the Firebase projectId for Firestore paths
+export let appId = firebaseConfig.projectId;
 export let userDiscordInfo = { // Stores Discord profile data
     id: null,
     username: null,
@@ -24,19 +38,6 @@ export let userDiscordInfo = { // Stores Discord profile data
  */
 export async function initializeFirebase(onAuthStatusChangeCallback, onFirebaseErrorCallback) {
     try {
-        // Access global variables provided by the Canvas environment
-        appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        // __initial_auth_token is primarily for Canvas environment's internal auth,
-        // we will prioritize Discord auth if available.
-        // const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        if (!firebaseConfig) {
-            console.error("Firebase config not found. Please ensure __firebase_config is set.");
-            onFirebaseErrorCallback('Firebase config not found. Cannot initialize.');
-            return;
-        }
-
         // Initialize Firebase app, Firestore database, and Auth service
         app = initializeApp(firebaseConfig);
         db = getFirestore(app);
