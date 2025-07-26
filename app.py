@@ -198,7 +198,7 @@ def frontend_redirect():
     """
     # IMPORTANT: Update this to your actual deployed frontend URL (from Vercel)
     # This will be your Vercel URL, e.g., "https://nzpacks-website.vercel.app"
-    frontend_base_url = "YOUR_VERCEL_FRONTEND_URL_HERE" # <<< UPDATE THIS FOR DEPLOYMENT
+    frontend_base_url = "https://nzpacks-website.vercel.app" # <<< UPDATE THIS FOR DEPLOYMENT
 
     # Extract parameters from the current request args
     token = request.args.get("token", "")
