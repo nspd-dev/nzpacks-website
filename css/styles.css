@@ -1,0 +1,129 @@
+/* css/styles.css */
+
+/* Base styles for body and container */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #000; /* Pure black background */
+    color: #f0f0f0; /* Off-white for general text */
+    /* Add your custom background image here */
+    /* background-image: url('your-background-image.jpg'); */
+    /* background-size: cover; */
+    /* background-position: center; */
+    /* background-attachment: fixed; */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+/* Navigation Buttons */
+.header-nav-button {
+    @apply px-4 py-2 rounded-md text-white font-medium bg-gray-800 
+           hover:bg-gray-700 hover:shadow-md 
+           focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 
+           transition duration-300 ease-in-out; /* Smoother transitions */
+}
+
+.header-nav-button.active {
+    @apply bg-gray-600 shadow-inner; /* Slightly lighter gray for active state with inner shadow */
+}
+
+/* Scenepack Cards */
+.scenepack-card {
+    @apply bg-gray-900 rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105;
+}
+
+.card-image {
+    @apply w-full h-48 object-cover rounded-t-lg;
+}
+
+.card-title {
+    @apply text-lg font-semibold text-white truncate;
+}
+
+/* Input Fields */
+.input-field {
+    @apply w-full p-3 rounded-md bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:ring-gray-500 focus:border-gray-500;
+}
+
+.select-field {
+    @apply p-3 rounded-md bg-gray-900 border border-gray-700 text-white focus:ring-gray-500 focus:border-gray-500;
+}
+
+/* Primary Button (e.g., Add/Update) */
+.btn-primary {
+    @apply px-6 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition duration-200;
+}
+
+/* Secondary Button (e.g., Cancel) */
+.btn-secondary {
+    @apply px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition duration-200;
+}
+
+/* Edit Button */
+.btn-edit {
+    @apply px-3 py-1 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition duration-200;
+}
+
+/* Delete Button */
+.btn-delete {
+    @apply px-3 py-1 bg-black text-white rounded-md border border-gray-700 hover:bg-gray-900 transition duration-200;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #1a1a1a; /* Darker gray for modal background */
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid #333; /* Darker border */
+    color: #f0f0f0;
+}
+
+/* Message Boxes (Success/Error) */
+.message-box {
+    @apply p-3 mb-4 rounded-md text-center;
+}
+
+.message-box.error {
+    @apply bg-red-700 text-white; /* Keep red for clear error feedback */
+}
+
+.message-box.success {
+    @apply bg-green-700 text-white; /* Keep green for clear success feedback */
+}
+
+/* Specific Section Headings */
+h1, h2, h3 {
+    @apply text-white; /* All headings are white */
+}
+
+h2 {
+    @apply text-4xl sm:text-5xl; /* Responsive font size for H2 */
+}
+
+h3 {
+    @apply text-3xl sm:text-4xl; /* Responsive font size for H3 */
+}
+
+/* Dashboard table specific styling */
+table th, table td {
+    padding: 0.75rem 1rem; /* Adjust padding for table cells */
+}
